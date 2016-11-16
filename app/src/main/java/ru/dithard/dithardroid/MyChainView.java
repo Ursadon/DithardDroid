@@ -25,21 +25,36 @@ public class MyChainView extends View {
     private Paint myPaint;
     private RectF rect;
     private float start_y = 0;
+    final View view=this; //smth;
+
     public MyChainView(Context context, AttributeSet attrs) {
         super(context, attrs);
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.dot);
         myPaint = new Paint();
         myPaint.setColor(Color.LTGRAY);
         myPaint.setAntiAlias(true);
+        myPaint.setStrokeWidth(25f);
         //TODO: remove this absolute values
-        rect = new RectF(0, 0, 500, 500);
-    }
 
+    }
+    @Override
+    protected void onFinishInflate() {
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                view.getHeight(); //height is ready
+                Log.e("[RECT_Fxxxx: w/h]: ", view.getWidth() + "+" +  view.getHeight());
+                rect = new RectF(0, 0, view.getWidth(), view.getHeight());
+            }
+        });
+        Log.e("TAG", "Started bluetooth");
+        Log.e("[RECT_FINISH: w/h]: ", this.getWidth() + "+" +  this.getHeight());
+    }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if(!rect.contains(event.getX(), event.getY()-100)) {
+                if(!rect.contains(event.getX(), event.getY()-(bitmap.getWidth()/2)) || !rect.contains(event.getX(), event.getY()+(bitmap.getWidth()/2))) {
                     return false;
                 }
                 //x = event.getX();
@@ -70,7 +85,15 @@ public class MyChainView extends View {
         //Log.e("[onDraw w/h]: ", width + "+" + height);
 
         super.onDraw(canvas);
+
+        myPaint.setColor(Color.LTGRAY);
         canvas.drawCircle(width/2, height/2, height/2, myPaint);
+
+        myPaint.setColor(Color.GREEN);
+        canvas.drawLine(width/2, 0, width/2, height, myPaint);
+        
+        myPaint.setColor(Color.RED);
+        canvas.drawLine(0, height/2, width, height/2, myPaint);
         canvas.drawBitmap(bitmap, (width/2)-(bitmap.getWidth()/2), (height/2)-(y+(bitmap.getHeight()/2)), null);
     }
 }
