@@ -1,6 +1,7 @@
 package ru.dithard.dithardroid;
 
 import android.graphics.RectF;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.graphics.Bitmap;
@@ -11,6 +12,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 
 /**
  * Created by nikolay on 16.11.16.
@@ -18,11 +21,10 @@ import android.view.MotionEvent;
 
 public class MyChainView extends View {
     Bitmap bitmap;
-    private float x, y;
+    private float x=0, y=0;
     private Paint myPaint;
     private RectF rect;
-
-
+    private float start_y = 0;
     public MyChainView(Context context, AttributeSet attrs) {
         super(context, attrs);
         // TODO Auto-generated constructor stub
@@ -30,16 +32,14 @@ public class MyChainView extends View {
         myPaint = new Paint();
         myPaint.setColor(Color.LTGRAY);
         myPaint.setAntiAlias(true);
-        x = this.getWidth();
-        y = this.getHeight();
         rect = new RectF(0, 0, 500, 500);
-        Log.e("[RECT: w/h]: ", this.getWidth() + "+" +  this.getHeight());
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // TODO Auto-generated method stub
 
-//
+
 
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
@@ -47,21 +47,21 @@ public class MyChainView extends View {
                     return true;
                 }
                 //x = event.getX();
-                y = event.getY();
-                invalidate();
+                start_y = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
                 if(!rect.contains(event.getX(), event.getY())) {
-                    return true;
+                    return false;
                 }
                 //x = event.getX();
-                y = event.getY();
+                y = start_y - event.getY();
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                y = this.getHeight()/2;
+                y = 0;
                 //y = event.getY();
                 invalidate();
+                Log.e("[MotionEvent st/y]: ", start_y + "+" + y);
                 break;
         }
         return true;
@@ -72,10 +72,10 @@ public class MyChainView extends View {
         // TODO Auto-generated method stub
         int width = this.getWidth();
         int height = this.getHeight();
-        Log.d("[onDraw w/h]: ", width + "+" + height);
+        //Log.e("[onDraw w/h]: ", width + "+" + height);
 
         super.onDraw(canvas);
         canvas.drawCircle(width/2, height/2, height/2, myPaint);
-        canvas.drawBitmap(bitmap, x-(bitmap.getHeight()/2), y-(bitmap.getWidth()/2), null);
+        canvas.drawBitmap(bitmap, (width/2)-(bitmap.getWidth()/2), (height/2)-(y+(bitmap.getHeight()/2)), null);
     }
 }

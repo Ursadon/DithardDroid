@@ -11,6 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ru.dithard.dithardroid.MainActivity">
     <ru.dithard.dithardroid.MyChainView
+        android:id="@+id/joy"
         android:layout_width="300dp"
         android:layout_height="300dp"/>
 </RelativeLayout>
