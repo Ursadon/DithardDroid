@@ -27,30 +27,26 @@ public class MyChainView extends View {
     private float start_y = 0;
     public MyChainView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO Auto-generated constructor stub
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.dot);
         myPaint = new Paint();
         myPaint.setColor(Color.LTGRAY);
         myPaint.setAntiAlias(true);
+        //TODO: remove this absolute values
         rect = new RectF(0, 0, 500, 500);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        // TODO Auto-generated method stub
-
-
-
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if(!rect.contains(event.getX(), event.getY())) {
-                    return true;
+                if(!rect.contains(event.getX(), event.getY()-100)) {
+                    return false;
                 }
                 //x = event.getX();
                 start_y = event.getY();
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(!rect.contains(event.getX(), event.getY())) {
+                if(!rect.contains(event.getX(), event.getY()-(bitmap.getWidth()/2)) || !rect.contains(event.getX(), event.getY()+(bitmap.getWidth()/2))) {
                     return false;
                 }
                 //x = event.getX();
@@ -69,7 +65,6 @@ public class MyChainView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-        // TODO Auto-generated method stub
         int width = this.getWidth();
         int height = this.getHeight();
         //Log.e("[onDraw w/h]: ", width + "+" + height);
