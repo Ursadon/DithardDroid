@@ -1,41 +1,38 @@
 package ru.dithard.dithardroid;
 
-import android.graphics.RectF;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Paint;
-import android.graphics.Color;
-import android.content.Context;
-import android.util.AttributeSet;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
+import android.view.View;
+import android.support.v4.content.LocalBroadcastManager;
+import android.content.Intent;
 /**
  * Created by nikolay on 16.11.16.
  */
 
-public class MyChainView extends View {
+public class MyJoystickHorizontal extends View {
     Bitmap bitmap;
-    private float x=0, y=0;
+    private float x=0;
     private Paint myPaint;
     private RectF rect;
-    private float start_y = 0;
+    private float start_x = 0;
+    private boolean direction_UD = true;
     final View view=this; //smth;
 
-    public MyChainView(Context context, AttributeSet attrs) {
+    public MyJoystickHorizontal(Context context, AttributeSet attrs) {
         super(context, attrs);
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.dot);
         myPaint = new Paint();
         myPaint.setColor(Color.LTGRAY);
         myPaint.setAntiAlias(true);
         myPaint.setStrokeWidth(25f);
-        //TODO: remove this absolute values
-
     }
     @Override
     protected void onFinishInflate() {
@@ -47,32 +44,34 @@ public class MyChainView extends View {
                 rect = new RectF(0, 0, view.getWidth(), view.getHeight());
             }
         });
-        Log.e("TAG", "Started bluetooth");
         Log.e("[RECT_FINISH: w/h]: ", this.getWidth() + "+" +  this.getHeight());
     }
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()){
             case MotionEvent.ACTION_DOWN:
-                if(!rect.contains(event.getX(), event.getY()-(bitmap.getWidth()/2)) || !rect.contains(event.getX(), event.getY()+(bitmap.getWidth()/2))) {
+                if(!rect.contains(event.getX()-(bitmap.getHeight()/2), event.getY()) || !rect.contains(event.getX()+(bitmap.getHeight()/2), event.getY())) {
                     return false;
                 }
                 //x = event.getX();
-                start_y = event.getY();
+                start_x = event.getX();
+
                 break;
             case MotionEvent.ACTION_MOVE:
-                if(!rect.contains(event.getX(), event.getY()-(bitmap.getWidth()/2)) || !rect.contains(event.getX(), event.getY()+(bitmap.getWidth()/2))) {
+                if(!rect.contains(event.getX()-(bitmap.getHeight()/2), event.getY()) || !rect.contains(event.getX()+(bitmap.getHeight()/2), event.getY())) {
                     return false;
                 }
                 //x = event.getX();
-                y = start_y - event.getY();
+                x = start_x - event.getX();
+                sendMessage(x);
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                y = 0;
+                x = 0;
                 //y = event.getY();
                 invalidate();
-                Log.e("[MotionEvent st/y]: ", start_y + "+" + y);
+                Log.e("[MotionEvent st/x]: ", start_x + "+" + x);
+                sendMessage(x);
                 break;
         }
         return true;
@@ -91,9 +90,17 @@ public class MyChainView extends View {
 
         myPaint.setColor(Color.GREEN);
         canvas.drawLine(width/2, 0, width/2, height, myPaint);
-        
+
         myPaint.setColor(Color.RED);
         canvas.drawLine(0, height/2, width, height/2, myPaint);
-        canvas.drawBitmap(bitmap, (width/2)-(bitmap.getWidth()/2), (height/2)-(y+(bitmap.getHeight()/2)), null);
+        canvas.drawBitmap(bitmap, (width/2)-(x+(bitmap.getWidth()/2)), (height/2)-(bitmap.getHeight()/2), null);
+    }
+
+    private void sendMessage(float x) {
+        Log.d("sender", "Broadcasting message");
+        Intent intent = new Intent("joystick-motion-x");
+        // You can also include some extra data.
+        intent.putExtra("message",  Float.toString(Math.round(x)));
+        LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(intent);
     }
 }

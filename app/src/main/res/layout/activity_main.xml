@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,8 +11,84 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="ru.dithard.dithardroid.MainActivity">
-    <ru.dithard.dithardroid.MyChainView
-        android:id="@+id/joy"
-        android:layout_width="150dp"
-        android:layout_height="150dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center">
+
+        <ru.dithard.dithardroid.MyJoystickVertical
+            android:id="@+id/joy_UD"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            custom:direction="H"/>
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+
+        <GridLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="3">
+            <TextView
+                android:id="@+id/labelX"
+                android:maxLines="1"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X: "
+                android:textSize="24sp"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:id="@+id/textX" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:minHeight="16dp" />
+
+            <TextView
+                android:id="@+id/labelY"
+                android:maxLines="1"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Y: "
+                android:textSize="24sp"
+                android:textColor="#000000"
+                />
+
+            <TextView
+                android:text="0"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="24sp"
+                android:textColor="#000000"
+                android:id="@+id/textY" />
+        </GridLayout>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <ru.dithard.dithardroid.MyJoystickHorizontal
+            android:id="@+id/joy_LR"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            custom:direction="V"/>
+    </LinearLayout>
+
 </RelativeLayout>
